@@ -6,7 +6,3 @@ package holes where
 
 lean_lib Holes where
   -- add library configuration options here
-
-@[default_target]
-lean_exe holes where
-  root := `Main
