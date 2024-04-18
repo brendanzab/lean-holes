@@ -19,7 +19,7 @@ For examples, see [Examples/Sample.lean](Examples/Sample.lean).
 A series of code actions are provided:
 
 - [x] Fill with contents
-- [ ] Elaborate and fill with contents
+- [x] Fill with elaborated contents
 - [x] Automatically fill a hole (NOTE: rudimentary support)
 - [ ] Refine hole
 - [ ] Split hole

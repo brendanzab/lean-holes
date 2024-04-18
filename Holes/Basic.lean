@@ -64,7 +64,18 @@ def fillHole (info : HoleInfo) : TermElabM Format :=
       let _ ← elabTermEnsuringType stx info.expectedType? (catchExPostpone := false)
       PrettyPrinter.formatTerm stx
 
--- TODO: Elaborate and fill (with normalised experession)
+/--
+  Fill a hole with the elaborated contents
+-/
+def elabFillHole (info : HoleInfo) : TermElabM Format :=
+  match info.contents? with
+  | none => throwError "no contents in hole"
+  | some stx =>
+    info.withLocals do
+      -- Ensure that the contents of the hole matches the expected type
+      let e ← elabTermEnsuringType stx info.expectedType? (catchExPostpone := false)
+      let t ← Tactic.TryThis.delabToRefinableSyntax e
+      monadLift (PrettyPrinter.ppTerm t)
 
 /--
   Attempt to automatically fill a hole
@@ -186,17 +197,14 @@ private def holeProvider : CodeActionProvider := fun params snap => do
     unless stxRange.start.line ≤ params.range.end.line do return result
     unless params.range.start.line ≤ stxRange.end.line do return result
 
-    let mut result := result
-
-    -- Fill with contents action
-    if holeInfo.contents?.isSome then
+    let holeAction (title : String) (action : HoleInfo → TermElabM Format) : LazyCodeAction :=
       let eager : CodeAction := {
-        title := s!"Fill with contents"
+        title
         kind? := "quickfix"
       }
 
       let lazy : IO CodeAction := do
-        let ft ← runTermElabM snap (fillHole holeInfo) rc
+        let ft ← runTermElabM snap (action holeInfo) rc
           -- FIXME: Prints to the console... we need a user-facing error
           |> EIO.toIO (IO.userError ∘ RequestError.message)
 
@@ -208,29 +216,15 @@ private def holeProvider : CodeActionProvider := fun params snap => do
           }
         }
 
-      result := result.push { eager, lazy? := lazy }
+      { eager, lazy? := lazy }
 
-    -- Automatic proof search
+    let mut result := result
 
-    let eager : CodeAction := {
-      title := s!"Automatically fill hole"
-      kind? := "quickfix"
-    }
+    if holeInfo.contents?.isSome then
+      result := result.push <| holeAction s!"Fill with contents" fillHole
+      result := result.push <| holeAction s!"Fill with elaborated contents" elabFillHole
 
-    let lazy : IO CodeAction := do
-      let ft ← runTermElabM snap (autoFillHole holeInfo) rc
-        -- FIXME: Prints to the console... we need a user-facing error
-        |> EIO.toIO (IO.userError ∘ RequestError.message)
-
-      pure {
-        eager with
-        edit? := WorkspaceEdit.ofTextDocumentEdit {
-          textDocument := doc.versionedIdentifier
-          edits := #[{ range := stxRange, newText := s!"{ft}" }]
-        }
-      }
-
-    result := result.push { eager, lazy? := lazy }
+    result := result.push <| holeAction s!"Automatically fill hole" autoFillHole
 
     pure result
 

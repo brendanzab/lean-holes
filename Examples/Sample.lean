@@ -21,6 +21,9 @@ example (n : Nat) : Nat :=
   {! 3 + n !}
 
 example (n : Nat) : Nat :=
+  {! ((3 + 1)) + n !}
+
+example (n : Nat) : Nat :=
   {! () !} -- FIXME: Fails silently, logging to the console
 
 inductive Vect (α : Type u) : Nat → Type u where
