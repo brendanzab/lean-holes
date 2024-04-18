@@ -25,8 +25,7 @@ A series of code actions are provided:
 - [ ] Split hole
 - [ ] Make definition
 
-The same actions have been added to `_`, `?_`, and `sorry`, but no infoview
-support is provided (I’m not sure how to do this, or if it is even possible).
+The same actions have been added to `_`, `?_`, and `sorry`.
 
 ## Resources
 

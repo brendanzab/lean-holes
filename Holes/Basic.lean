@@ -152,20 +152,9 @@ private def holeImpl : TermElab := fun stx expectedType? => do
       }
     }
 
-    -- Show goal and context in the infoview
-    -- TODO: Proper widget, like the “Expected type” widget
-    let locals :=
-      lctx.decls.toList |> List.filterMap fun
-        | some d =>
-          if d.isImplementationDetail then none else
-            match d.value? with
-            | some v => some m!"{d.userName} : {d.type} := {v}\n"
-            | none => some m!"{d.userName} : {d.type}\n"
-        | none => none
-
-    logInfo m!"{MessageData.joinSep locals MessageData.nil}⊢ {expectedType?}"
-
-    mkSorry expectedType (synthetic := true)
+    -- Marked as non-synthetic to ensure that term goals are displayed in the
+    -- infotree. For more info see the docs for `Init.Prelude.sorryAx`.
+    mkSorry expectedType (synthetic := false)
 
 @[term_elab questionHole]
 private def questionHoleImpl : TermElab := holeImpl
