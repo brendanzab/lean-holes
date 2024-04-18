@@ -204,17 +204,29 @@ private def holeProvider : CodeActionProvider := fun params snap => do
       }
 
       let lazy : IO CodeAction := do
-        let ft ← runTermElabM snap (action holeInfo) rc
-          -- FIXME: Prints to the console... we need a user-facing error
-          |> EIO.toIO (IO.userError ∘ RequestError.message)
-
-        pure {
-          eager with
-          edit? := WorkspaceEdit.ofTextDocumentEdit {
-            textDocument := doc.versionedIdentifier
-            edits := #[{ range := stxRange, newText := s!"{ft}" }]
+        match ← (runTermElabM snap (action holeInfo) rc).toBaseIO with
+        | .ok ft =>
+          pure {
+            eager with
+            edit? := WorkspaceEdit.ofTextDocumentEdit {
+              textDocument := doc.versionedIdentifier
+              edits := #[{ range := stxRange, newText := s!"{ft}" }]
+            }
           }
-        }
+        | .error e =>
+          -- TODO: At the moment this fails silently, logging an error in the
+          -- extension host output.
+          --
+          -- Instead, we probably want to relay a notification in the editor
+          -- window, possibly using something like `window/showMessage`
+          -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_showMessage).
+          -- This requires us to run an `IpcM` action however, e.g.
+          -- `Ipc.writeNotification`. This is a challenge from within `IO`.
+          --
+          -- We also don’t want to litter the notification list with error
+          -- messages... so we either need to have a way to clean these up, or
+          -- consider some other approach to recording user-facing errors.
+          throw <| IO.userError e.message
 
       { eager, lazy? := lazy }
 
