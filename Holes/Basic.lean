@@ -133,6 +133,7 @@ def makeDefinition (_info : HoleInfo) : TermElabM Format :=
 
 /-! # Hole elaborators -/
 
+@[term_elab questionHole, term_elab termHole]
 private def holeImpl : TermElab := fun stx expectedType? => do
   withExpectedType expectedType? fun expectedType => do
     let lctx ← getLCtx
@@ -155,12 +156,6 @@ private def holeImpl : TermElab := fun stx expectedType? => do
     -- Marked as non-synthetic to ensure that term goals are displayed in the
     -- infotree. For more info see the docs for `Init.Prelude.sorryAx`.
     mkSorry expectedType (synthetic := false)
-
-@[term_elab questionHole]
-private def questionHoleImpl : TermElab := holeImpl
-
-@[term_elab termHole]
-private def termHoleImpl : TermElab := holeImpl
 
 
 /-! # Code action providers -/
