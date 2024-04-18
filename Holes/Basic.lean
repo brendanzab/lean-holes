@@ -153,8 +153,10 @@ private def holeImpl : TermElab := fun stx expectedType? => do
       }
     }
 
+    logInfo m!"unfilled hole: {expectedType?}"
+
     -- Marked as non-synthetic to ensure that term goals are displayed in the
-    -- infotree. For more info see the docs for `Init.Prelude.sorryAx`.
+    -- infotree. For more information see the docs for `Init.Prelude.sorryAx`.
     mkSorry expectedType (synthetic := false)
 
 
