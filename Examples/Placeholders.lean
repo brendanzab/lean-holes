@@ -6,9 +6,6 @@ import Holes
   Try moving the cursor in your editor to the placeholders, and notice the code
   actions that appear (in VS Code these can be accessed via the lightbulb icon),
   and the goal information rendered in the infoview.
-
-  Note that there is currently no infoview support for existing placeholders,
-  unlike with the custom holes syntax.
 -/
 
 example (n : Nat) : Nat :=
