@@ -1,7 +1,7 @@
 # lean-holes
 
 > [!WARNING]
-> This an experimental and incomplete proof-of-concept!
+> This is an experimental and incomplete proof-of-concept!
 
 A syntax extension for [Lean 4](https://leanprover.github.io/) that adds support
 for interactive holes[^1]. The goal is to make it easier to interactively
@@ -20,7 +20,7 @@ A series of code actions are provided:
 
 - [x] Fill with contents
 - [x] Fill with elaborated contents
-- [x] Automatically fill a hole (NOTE: rudimentary support)
+- [x] Automatically fill a hole (NOTE: rudimentary support[^3])
 - [ ] Refine hole
 - [ ] Split hole
 - [ ] Make definition
@@ -47,3 +47,4 @@ Idris:
 
 [^1]: As seen in Agda and Idris. I’m not exactly sure when interactive holes
       where first introduced however... possibly in Epigram?
+[^3]: Auto-filling currently just looks up the local context for a matching declaration.
