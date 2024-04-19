@@ -74,8 +74,7 @@ def elabFillHole (info : HoleInfo) : TermElabM Format :=
     info.withLocals do
       -- Ensure that the contents of the hole matches the expected type
       let e ← elabTermEnsuringType stx info.expectedType? (catchExPostpone := false)
-      let t ← Tactic.TryThis.delabToRefinableSyntax e
-      monadLift (PrettyPrinter.ppTerm t)
+      PrettyPrinter.ppUsing e Tactic.TryThis.delabToRefinableSyntax
 
 /--
   Attempt to automatically fill a hole
@@ -100,8 +99,7 @@ def autoFillHole (info : HoleInfo) : TermElabM Format :=
 
       throwError m!"could not find solution for `{expectedType}`"
 
-    let t ← Tactic.TryThis.delabToRefinableSyntax e
-    monadLift (PrettyPrinter.ppTerm t)
+    PrettyPrinter.ppUsing e Tactic.TryThis.delabToRefinableSyntax
 
 /--
   Refine a hole
