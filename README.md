@@ -42,7 +42,8 @@ Agda docs:
 Idris:
 
 - [Idris 2: Interactive Editing](https://idris2.readthedocs.io/en/latest/tutorial/interactive.html)
-- [Idris: The IDE Protocol](https://docs.idris-lang.org/en/latest/reference/ide-protocol.html)
+- [Idris 2: The IDE Protocol](https://idris2.readthedocs.io/en/latest/implementation/ide-protocol.html)
+- [Idris 2: TTImp.Interactive.ExprSearch](https://github.com/idris-lang/Idris2/blob/main/src/TTImp/Interactive/ExprSearch.idr)
 
 [^1]: As seen in Agda and Idris. I’m not exactly sure when interactive holes
       where first introduced however... possibly in Epigram?
